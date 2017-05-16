@@ -85,10 +85,10 @@ while True:
 		if status != 75:
 			changeicon("75")
 		status = 75
-    elif ret < VOLT100:
-        if status != 100:
-            changeicon("100")
-        status = 100
+	elif ret < VOLT100:
+		if status != 100:
+			changeicon("100")
+		status = 100
 	else:
 		if status != -1:
 			changeicon("FULL")
