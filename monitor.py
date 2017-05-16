@@ -14,6 +14,7 @@ ICONPATH = "/home/pi/gbzattinymonitor/icons"
 CLIPS = 1
 REFRESH_RATE = 60
 VCC = 4.2
+VOLTFULL = 230
 VOLT100 = 225
 VOLT75 = 212
 VOLT50 = 206
@@ -22,7 +23,7 @@ VOLT0 = 190
 
 width = int(check_output("/bin/fbset").split("\n")[1].split("x")[0][6:]) -75
 if width < 600:
-	width = 650
+	width = 649
 def read():
 	return bus.read_byte(addr)
 	#sleep(0.3)
@@ -37,7 +38,7 @@ def convertVoltage(val):
 def changeicon(percent):
     i = 0
     killid = 0
-    os.system(PNGVIEWPATH + "/pngview -b 0 -l 3000" + percent + " -x " + str(width) + " -y 5 " + ICONPATH + "/battery" + percent + ".png &")
+    os.system(PNGVIEWPATH + "/pngview -b 0 -l 30001" + " -x " + str(width) + " -y 5 " + ICONPATH + "/battery" + percent + ".png &")
     out = check_output("ps aux | grep pngview | awk '{ print $2 }'", shell=True)
     nums = out.split('\n')
     for num in nums:
@@ -50,9 +51,9 @@ os.system(PNGVIEWPATH + "/pngview -b 0 -l 299999 -x 650 -y 5 " + ICONPATH + "/bl
 
 while True:
 	val1 = read()
-	sleep(.2)
+	sleep(2)
 	val2 = read()
-	sleep(.2)
+	sleep(2)
 	val3 = read()
 	ret = (float(val1+val2+val3)/3.0)
 	print ret
@@ -84,8 +85,12 @@ while True:
 		if status != 75:
 			changeicon("75")
 		status = 75
+    elif ret < VOLT100:
+        if status != 100:
+            changeicon("100")
+        status = 100
 	else:
-		if status != 100:
-			changeicon("100")
-		status = 100
+		if status != -1:
+			changeicon("FULL")
+		status = -1
 	sleep(REFRESH_RATE)
